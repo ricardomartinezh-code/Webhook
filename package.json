@@ -1,0 +1,8 @@
+{
+  "name": "meta-webhook",
+  "version": "1.0.0",
+  "main": "webhook.js",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
