@@ -72,14 +72,15 @@ Por lo tanto, sube este proyecto a Render (u otra plataforma similar como Railwa
 
 ## Despliegue en Render (resumen)
 
-1. Crea un repositorio en GitHub/GitLab/Bitbucket con este proyecto.
+1. Crea un repositorio en GitHub/GitLab/Bitbucket con este proyecto. Mantén el archivo `.nvmrc` en la raíz para que Render detecte automáticamente la versión de Node 18.
 2. En Render, crea un nuevo **Web Service** y conéctalo al repositorio.
 3. Configura:
    - **Runtime**: Node
    - **Build Command**: `npm install`
    - **Start Command**: `npm start`
    - Variables de entorno necesarias.
-4. Render desplegará el servicio y mostrará una URL pública (por ejemplo, `https://tu-servicio.onrender.com`).
-5. Usa esa URL para registrar el webhook en Meta como se describe arriba.
+4. En la sección **Environment**, verifica que Render muestre `NODE_VERSION=18`. Si no aparece automáticamente, añade la variable con ese valor de forma manual y vuelve a desplegar.
+5. Render desplegará el servicio y mostrará una URL pública (por ejemplo, `https://tu-servicio.onrender.com`).
+6. Usa esa URL para registrar el webhook en Meta como se describe arriba.
 
 Con esto tendrás el webhook listo para recibir mensajes de WhatsApp Business, reenviarlos a tu CRM y registrar los datos en Google Sheets si lo deseas.
