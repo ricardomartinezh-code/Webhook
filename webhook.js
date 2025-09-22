@@ -6,6 +6,7 @@ const app = express();
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN;
 const CRM_WEBHOOK_URL = process.env.CRM_WEBHOOK_URL;
 const CRM_API_KEY = process.env.CRM_API_KEY;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -162,5 +163,7 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Webhook corriendo en puerto ${PORT}`));
+// Render y otras plataformas detectan automáticamente el puerto desde la variable de entorno PORT.
+app.listen(PORT, () => {
+  console.log(`Servidor de webhook escuchando en el puerto ${PORT}`);
+});
