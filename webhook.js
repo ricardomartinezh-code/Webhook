@@ -3,13 +3,9 @@ const axios = require('axios');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ReLead_Verify_Token';
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-
-if (!verifyToken) {
-  console.warn('WHATSAPP_VERIFY_TOKEN is not set. GET /webhook verification will fail until it is configured.');
-}
 
 if (!accessToken || !phoneNumberId) {
   console.warn('WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID is missing. Automated replies are disabled.');

@@ -6,7 +6,7 @@ Servidor Express listo para desplegar en [Render](https://render.com) que expone
 
 1. Crea un archivo `.env` (opcional en local) o variables de entorno en Render con los siguientes valores:
    - `PORT`: Puerto en el que se ejecutará el servidor (Render lo define automáticamente).
-   - `WHATSAPP_VERIFY_TOKEN`: Token de verificación que configuraste en Meta para validar el Webhook.
+   - `WHATSAPP_VERIFY_TOKEN`: Token de verificación que configuraste en Meta para validar el Webhook. Si no defines ninguno, el servidor utilizará por defecto `ReLead_Verify_Token`.
    - `WHATSAPP_ACCESS_TOKEN`: Token de acceso a la API de WhatsApp Cloud.
    - `WHATSAPP_PHONE_NUMBER_ID`: ID del número de teléfono de WhatsApp Cloud.
 
