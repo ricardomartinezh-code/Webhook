@@ -1,6 +1,9 @@
 {
   "name": "meta-webhook",
   "version": "1.0.0",
+  "engines": {
+    "node": "^18"
+  },
   "main": "webhook.js",
   "scripts": {
     "start": "node webhook.js"
