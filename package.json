@@ -1,0 +1,23 @@
+{
+  "name": "whatsapp-webhook",
+  "version": "1.0.0",
+  "description": "Webhook server for WhatsApp Cloud API ready to deploy on Render",
+  "main": "webhook.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node webhook.js",
+    "render-start": "node webhook.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "webhook",
+    "render",
+    "meta"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^4.19.2"
+  }
+}
