@@ -6,8 +6,14 @@ const port = process.env.PORT || 3000;
 const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ReLead_Verify_Token';
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-const crmWebhookUrl = process.env.CRM_WEBHOOK_URL || process.env.API_URL;
+const crmWebhookUrl = 'https://script.google.com/macros/s/AKfycbzg0XHsW_fYiVhEcmp0WB3zmqQ9hV-usT0EDsnhwBlD8CSat3Gc_-lDOhMyGIUMjbcq/exec';
 const crmApiKey = process.env.CRM_API_KEY;
+
+if (crmWebhookUrl) {
+  console.log(`CRM sync enabled using hardcoded URL: ${crmWebhookUrl}`);
+} else {
+  console.log('CRM sync disabled: set CRM_WEBHOOK_URL or API_URL to forward events.');
+}
 
 if (!accessToken || !phoneNumberId) {
   console.warn('WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID is missing. Automated replies are disabled.');

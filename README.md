@@ -8,9 +8,8 @@ Servidor Express listo para desplegar en [Render](https://render.com) que expone
    - `PORT`: Puerto en el que se ejecutará el servidor (Render lo define automáticamente).
    - `WHATSAPP_VERIFY_TOKEN`: Token de verificación que configuraste en Meta para validar el Webhook. Si no defines ninguno, el servidor utilizará por defecto `ReLead_Verify_Token`.
    - `WHATSAPP_ACCESS_TOKEN`: Token de acceso a la API de WhatsApp Cloud.
-   - `WHATSAPP_PHONE_NUMBER_ID`: ID del número de teléfono de WhatsApp Cloud.
-   - `CRM_WEBHOOK_URL` (opcional): URL a la que se enviarán los datos enriquecidos del webhook para sincronizarlos con tu CRM. Si ya cuentas con `API_URL` para tu backend de CRM, puedes omitir esta variable y se reutilizará automáticamente.
-   - `CRM_API_KEY` (opcional): Token que se incluirá en la cabecera `Authorization` al sincronizar con el CRM.
+  - `WHATSAPP_PHONE_NUMBER_ID`: ID del número de teléfono de WhatsApp Cloud.
+  - `CRM_API_KEY` (opcional): Token que se incluirá en la cabecera `Authorization` al sincronizar con el CRM.
 
 2. Instala dependencias:
 
@@ -38,7 +37,7 @@ Cuando se recibe un evento de WhatsApp Cloud API, el servidor genera un payload 
 - Mensajes recibidos con contenido de texto, botones, interacciones y metadatos de archivos o ubicaciones.
 - Estados de mensajes (entregado, leído, etc.) con información de conversación y costos.
 
-Si configuras `CRM_WEBHOOK_URL`, el payload se enviará mediante `POST` en formato JSON al endpoint que elijas. Si prefieres reutilizar una variable existente, establece `API_URL` con la URL de tu CRM y el webhook la usará automáticamente. Puedes proteger la integración con `CRM_API_KEY` (se enviará como `Authorization: Bearer <token>`). Si no defines ninguna de las URLs, el proceso se omitirá automáticamente y el webhook seguirá respondiendo a Meta.
+El payload se enviará mediante `POST` en formato JSON al endpoint `https://script.google.com/macros/s/AKfycbzg0XHsW_fYiVhEcmp0WB3zmqQ9hV-usT0EDsnhwBlD8CSat3Gc_-lDOhMyGIUMjbcq/exec`. Puedes proteger la integración con `CRM_API_KEY` (se enviará como `Authorization: Bearer <token>`). Si no defines el token, la petición se enviará sin cabecera de autenticación.
 
 ## Despliegue en Render
 
