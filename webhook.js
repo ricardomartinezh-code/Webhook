@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ReLead_Verify_Token';
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-const crmWebhookUrl = process.env.CRM_WEBHOOK_URL;
+const crmWebhookUrl = process.env.CRM_WEBHOOK_URL || process.env.API_URL;
 const crmApiKey = process.env.CRM_API_KEY;
 
 if (!accessToken || !phoneNumberId) {
