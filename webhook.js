@@ -6,6 +6,14 @@ const port = process.env.PORT || 3000;
 const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'ReLead_Verify_Token';
 const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
 const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+const crmWebhookUrl = 'https://script.google.com/macros/s/AKfycbzg0XHsW_fYiVhEcmp0WB3zmqQ9hV-usT0EDsnhwBlD8CSat3Gc_-lDOhMyGIUMjbcq/exec';
+const crmApiKey = process.env.CRM_API_KEY;
+
+if (crmWebhookUrl) {
+  console.log(`CRM sync enabled using hardcoded URL: ${crmWebhookUrl}`);
+} else {
+  console.log('CRM sync disabled: set CRM_WEBHOOK_URL or API_URL to forward events.');
+}
 
 if (!accessToken || !phoneNumberId) {
   console.warn('WHATSAPP_ACCESS_TOKEN or WHATSAPP_PHONE_NUMBER_ID is missing. Automated replies are disabled.');
@@ -42,6 +50,11 @@ app.post('/webhook', async (req, res) => {
     const changes = entry?.changes?.[0];
     const value = changes?.value;
     const message = value?.messages?.[0];
+
+    if (value) {
+      const crmPayload = buildCrmPayload(value);
+      await sendDataToCrm(crmPayload);
+    }
 
     if (message) {
       console.log('Incoming message:', JSON.stringify(message, null, 2));
@@ -87,6 +100,129 @@ async function sendWhatsAppText(to, text) {
       'Content-Type': 'application/json'
     }
   });
+}
+
+function buildCrmPayload(value) {
+  const contact = value?.contacts?.[0] || {};
+  const messages = (value?.messages || []).map((msg) => buildCrmMessage(msg));
+  const statuses = (value?.statuses || []).map((status) => ({
+    id: status.id,
+    status: status.status,
+    timestamp: status.timestamp,
+    recipientId: status.recipient_id,
+    conversation: status.conversation,
+    pricing: status.pricing,
+    errors: status.errors
+  }));
+  const firstStatusRecipient = value?.statuses?.[0]?.recipient_id;
+
+  return {
+    contact: {
+      waId: contact.wa_id || messages[0]?.from || firstStatusRecipient || null,
+      profileName: contact.profile?.name || null
+    },
+    metadata: value?.metadata,
+    messages,
+    statuses
+  };
+}
+
+function buildCrmMessage(msg = {}) {
+  const base = {
+    id: msg.id,
+    from: msg.from,
+    timestamp: msg.timestamp,
+    type: msg.type
+  };
+
+  if (msg.text?.body) {
+    base.text = msg.text.body;
+  }
+
+  if (msg.button?.text) {
+    base.buttonText = msg.button.text;
+  }
+
+  if (msg.interactive) {
+    base.interactive = {
+      type: msg.interactive.type,
+      buttonReply: msg.interactive.button_reply,
+      listReply: msg.interactive.list_reply
+    };
+  }
+
+  const media = extractMediaInfo(msg);
+  if (media) {
+    base.media = media;
+  }
+
+  if (msg.context) {
+    base.context = {
+      id: msg.context.id,
+      from: msg.context.from
+    };
+  }
+
+  return base;
+}
+
+function extractMediaInfo(msg = {}) {
+  const mediaTypes = ['image', 'audio', 'document', 'video', 'sticker'];
+
+  for (const type of mediaTypes) {
+    if (msg[type]) {
+      return {
+        type,
+        id: msg[type].id,
+        mimeType: msg[type].mime_type,
+        sha256: msg[type].sha256,
+        caption: msg[type].caption
+      };
+    }
+  }
+
+  if (msg.location) {
+    return {
+      type: 'location',
+      latitude: msg.location.latitude,
+      longitude: msg.location.longitude,
+      name: msg.location.name,
+      address: msg.location.address
+    };
+  }
+
+  return null;
+}
+
+async function sendDataToCrm(payload) {
+  if (!payload) {
+    return;
+  }
+
+  if (!crmWebhookUrl) {
+    console.log('CRM webhook URL is not configured. Skipping CRM sync.');
+    return;
+  }
+
+  const hasMessages = Array.isArray(payload.messages) && payload.messages.length > 0;
+  const hasStatuses = Array.isArray(payload.statuses) && payload.statuses.length > 0;
+
+  if (!hasMessages && !hasStatuses) {
+    console.log('No CRM data to send.');
+    return;
+  }
+
+  try {
+    await axios.post(crmWebhookUrl, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(crmApiKey ? { Authorization: `Bearer ${crmApiKey}` } : {})
+      }
+    });
+    console.log('CRM payload sent successfully');
+  } catch (error) {
+    console.error('Error sending data to CRM:', error?.response?.data || error.message);
+  }
 }
 
 app.listen(port, () => {
